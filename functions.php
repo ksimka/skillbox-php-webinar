@@ -25,11 +25,11 @@ function read_tasks_from_file(string $path) : array {
         $fields = explode('|', $line, 3);
         // var_dump($fields);
 
-        $id = $fields[0];
+        $id = trim($fields[0]);
         $tasks[$id] = [
             'id' => $id,
-            'text' => $fields[1],
-            'deadline' => new DateTimeImmutable($fields[2]),
+            'text' => trim($fields[1]),
+            'deadline' => new DateTimeImmutable(trim($fields[2])),
         ];
     }
 
