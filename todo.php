@@ -7,6 +7,8 @@
  * - show all to-do list
  */
 
+const DB = 'db/tasks.db';
+
 require 'functions.php'; // https://www.php.net/manual/ru/function.require.php
 
 echo greeting();
@@ -37,7 +39,7 @@ $command = $argv[$optind] ?? ''; // https://www.php.net/manual/ru/reserved.varia
 
 if ($command === '') {
     // This is 'show' command
-    $tasks = read_tasks_from_file('db/tasks.db');
+    $tasks = read_tasks_from_file(DB);
     echo render_todo_list($tasks);
 } elseif ($command === 'add') {
     $task_text = $argv[$optind + 1] ?? '';
@@ -52,8 +54,15 @@ if ($command === '') {
 
     // php todo.php --deadline "2019-08-30 10:00:00" add "Поздравить маму с днём мамы"
 
-    var_dump($task_text, $deadline);
+    $task_id = get_next_task_id(read_tasks_from_file(DB));
+    $task = [
+        'id' => $task_id,
+        'text' => $task_text,
+        'deadline' => $deadline,
+    ];
+    save_task_to_file(DB, $task);
 
+    echo 'Saved!' . PHP_EOL;
 } else {
     echo red_line("[!!!] unknown command {$command}");
     echo $help;

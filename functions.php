@@ -48,3 +48,15 @@ function render_todo_list(array $tasks) : string {
 
     return implode(PHP_EOL, $tasks_lines) . PHP_EOL;
 }
+
+function get_next_task_id(array $tasks) : int {
+    return max(array_column($tasks, 'id')) + 1;
+}
+
+function save_task_to_file(string $path, array $task) : void {
+    $task_line = implode(' | ', $task) . PHP_EOL;
+    $saved = file_put_contents($path, $task_line, FILE_APPEND);
+    if ($saved === false) {
+        throw new RuntimeException('failed to save task to file ' . $path);
+    }
+}
