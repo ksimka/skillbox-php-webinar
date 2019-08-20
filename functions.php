@@ -29,9 +29,22 @@ function read_tasks_from_file(string $path) : array {
         $tasks[$id] = [
             'id' => $id,
             'text' => trim($fields[1]),
-            'deadline' => new DateTimeImmutable(trim($fields[2])),
+            'deadline' => trim($fields[2]),
         ];
     }
 
     return $tasks;
+}
+
+function render_todo_list(array $tasks) : string {
+    $header = 'id | task | deadline';
+    $hrule = str_repeat('-', 30);
+
+    $tasks_lines = [$header, $hrule];
+    foreach ($tasks as $task) {
+        $tasks_lines[] = "{$task['id']} | {$task['text']} | {$task['deadline']}";
+        $tasks_lines[] = $hrule;
+    }
+
+    return implode(PHP_EOL, $tasks_lines) . PHP_EOL;
 }
