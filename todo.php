@@ -37,7 +37,8 @@ $command = $argv[1] ?? ''; // https://www.php.net/manual/ru/reserved.variables.a
 
 if ($command === '') {
     // This is 'show' command
-    echo 'this is SHOW command' . PHP_EOL;
+    $tasks = read_tasks_from_file('db/tasks.db');
+    var_dump($tasks);
 } elseif ($command === 'add') {
     echo 'this is ADD command' . PHP_EOL;
 } else {
