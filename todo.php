@@ -16,18 +16,18 @@ echo greeting();
 // Using nowdoc syntax - https://www.php.net/manual/ru/language.types.string.php
 $help = <<<'HELP'
 
-Usage: php todo.php [command] [options]
+Usage: php todo.php [options] [command]
 
   php todo.php                                                      - show all tasks
-  php todo.php add <task text> --deadline=<datetime>                - add new task
-  php todo.php edit <task id> <new text> --deadline=<new datetime>  - edit task
+  php todo.php --deadline=<datetime> add <task text>                - add new task
+  php todo.php --deadline=<new datetime> edit <task id> <new text>  - edit task
   php todo.php del <task id>                                        - remove task
-  php todo.php -i                                                   - interactive mode
+  php todo.php -i add                                               - interactive mode
   php todo.php --help                                               - show this help 
 
 HELP;
 
-$options = getopt('', ['help', 'deadline:'], $optind); // https://www.php.net/manual/ru/function.getopt.php
+$options = getopt('i', ['help', 'deadline:'], $optind); // https://www.php.net/manual/ru/function.getopt.php
 if (isset($options['help'])) {
     echo $help;
     exit;
@@ -42,15 +42,27 @@ if ($command === '') {
     $tasks = read_tasks_from_file(DB);
     echo render_todo_list($tasks);
 } elseif ($command === 'add') {
-    $task_text = $argv[$optind + 1] ?? '';
-    // Validation.
-    if ($task_text === '') {
-        echo red_line('Please specify a text for "add" command');
-        echo $help;
-        exit(1);
-    }
+    if (isset($options['i'])) {
+        echo 'Enter the task: ';
+        $task_text = trim(fgets(STDIN));
+        if (trim($task_text) === '') {
+            echo red_line('Text can not be empty!');
+            exit(1);
+        }
 
-    $deadline = $options['deadline'] ?? '';
+        echo 'Enter the deadline: ';
+        $deadline = trim(fgets(STDIN));
+    } else {
+        $task_text = $argv[$optind + 1] ?? '';
+        // Validation.
+        if ($task_text === '') {
+            echo red_line('Please specify a text for "add" command');
+            echo $help;
+            exit(1);
+        }
+
+        $deadline = $options['deadline'] ?? '';
+    }
 
     // php todo.php --deadline "2019-08-30 10:00:00" add "Поздравить маму с днём мамы"
 
